@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">Add a New Product</h1>
+                        <form method="post" action="{% url 'add_product' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name:</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cost_price" class="form-label">Cost Price:</label>
+                                <input type="number" class="form-control" id="cost_price" name="cost_price" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="selling_price" class="form-label">Selling Price:</label>
+                                <input type="number" class="form-control" id="selling_price" name="selling_price" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary btn-lg mb-3">Add Product</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение jQuery и Bootstrap JS (для взаимодействия с Bootstrap компонентами) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

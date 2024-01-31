@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="{% url 'index' %}">Business-Total</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a href="{% url 'profile' %}" class="btn btn-primary">Profile</a>
+            </li>
+            {% else %}
+            <li class="nav-item" style="margin-right: 20px">
+                <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+   {% if user.is_authenticated %}
+  <div class="container mt-4">
+    <h1 class="text-center">Профиль пользователя</h1>
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Имя пользователя</h5>
+        <p class="card-text">{{ user.username }}</p>
+        <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+      </div>
+    </div>
+  {% else %}
+    <h1 class="text-center">Вы не зарегестрированы.</h1>
+  {% endif %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+<style>
+  body {
+      background-color: #f8f9fa;
+  }
+
+  .navbar {
+      background-color: #007bff;
+  }
+
+  .navbar-brand, .navbar-toggler-icon {
+      color: #ffffff !important;
+  }
+
+  .jumbotron {
+      background-color: #ffffff;
+  }
+
+  .card {
+      margin-bottom: 20px;
+  }
+
+  .card-title {
+      color: #007bff;
+  }
+
+  .btn-primary {
+      background-color: #007bff;
+      border: none;
+  }
+
+  .btn-primary:hover {
+      background-color: #0056b3;
+  }
+
+  .modal-content {
+      background-color: #ffffff;
+  }
+
+  .modal-title {
+      color: #007bff;
+  }
+</style>
+</html>

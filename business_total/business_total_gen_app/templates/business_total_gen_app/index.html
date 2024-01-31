@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Business Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #007bff;
+        }
+
+        .navbar-brand, .navbar-toggler-icon {
+            color: #ffffff !important;
+        }
+
+        .jumbotron {
+            background-color: #ffffff;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            color: #007bff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+        }
+
+        .modal-title {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{% url 'index' %}">Business-Total</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'profile' %}" class="btn btn-primary">Profile</a>
+                </li>
+                {% else %}
+                <li class="nav-item" style="margin-right: 20px">
+                    <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div class="jumbotron">
+            {% if user.is_authenticated %}
+            <h1 class="display-4">Welcome, {{ user.username }}, to Business-Total!</h1>
+            {% else %}
+            <h1 class="display-4">Welcome to Business-Total!</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row">
+            {% if user.is_authenticated %}
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">Business Dashboard</h1>
+                        <table class="table table-striped">
+                            <h2 class="card-title">Products</h2>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#createProductModal">
+                                <i class="fas fa-plus-circle"></i> Create Product
+                            </button> 
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Cost Price</th>
+                                    <th>Selling Price</th>
+                                    <th>Customers per day</th>
+                                    <th>Supplier URL</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.cost_price }}</td>
+                                    <td>{{ product.selling_price }}</td>
+                                    <td>{{ product.kol_d }}</td>
+                                    <td>
+                                        {% if product.supplier_url %}
+                                            <a href="{{ product.supplier_url }}" target="_blank">Link</a>
+                                        {% else %}
+                                            No URL
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="post" action="{% url 'delete_product' product.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="createProductModal" tabindex="-1" role="dialog" aria-labelledby="createProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createProductModalLabel">Создать товар</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'add_product' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name:</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cost_price" class="form-label">Cost Price:</label>
+                                    <input type="text" class="form-control" id="cost_price" name="cost_price" step="0.01" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="selling_price" class="form-label">Selling Price:</label>
+                                    <input type="text" class="form-control" id="selling_price" name="selling_price" step="0.01" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="selling_price" class="form-label">Number of customers per day:</label>
+                                    <input type="text" class="form-control" id="kol_day" name="kol_day" step="0.01" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="supplier_url" class="form-label">Ссылка на поставщика:</label>
+                                    <input type="url" class="form-control" id="supplier_url" name="supplier_url">
+                                </div>                                
+                                <button type="submit" class="btn btn-primary">Создать товар</button>
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Totals per day</h2>
+                        <p><strong>Turnaround:</strong> {{ revenue }}</p>
+                        <p><strong>Expenses:</strong> {{ costs }}</p>
+                        <p><strong>Visitors:</strong> {{ kol_day }}</p>
+                        <p><strong>Profit:</strong> {{ profit }}</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Totals per month</h2>
+                        <p><strong>Turnaround:</strong> {{ revenue_m }}</p>
+                        <p><strong>Expenses:</strong> {{ costs_m }}</p>
+                        <p><strong>Visitors:</strong> {{ kol_day_m }}</p>
+                        <p><strong>Profit:</strong> {{ profit_m }}</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-md-12">
+                <div class="container mt-5">
+                    <h1 class="text-center">Please register or login.</h1>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="modal fade" id="createProductModal" tabindex="-1" role="dialog" aria-labelledby="createProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createProductModalLabel">Create Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'add_product' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cost_price" class="form-label">Cost Price:</label>
+                            <input type="text" class="form-control" id="cost_price" name="cost_price" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selling_price" class="form-label">Selling Price:</label>
+                            <input type="text" class="form-control" id="selling_price" name="selling_price" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kol_day" class="form-label">Customers per day:</label>
+                            <input type="text" class="form-control" id="kol_day" name="kol_day" step="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="supplier_url" class="form-label">Supplier URL:</label>
+                            <input type="url" class="form-control" id="supplier_url" name="supplier_url">
+                        </div>                                
+                        <button type="submit" class="btn btn-primary">Create Product</button>
+                    </form>                            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
